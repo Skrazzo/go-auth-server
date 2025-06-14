@@ -14,50 +14,37 @@ A lightweight authentication service for Caddy's forward_auth middleware. This p
 
 - Go 1.16+ (for building)
 - Caddy v2
-- Docker (optional, for containerized deployment)
 
 ## Installation
 
-### Option 1: Clone and Build
-
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/caddy-auth.git
-cd caddy-auth
-
-# Create and configure .env file
-cat > .env << EOF
-JWT_KEY=your_secure_jwt_secret_key
-PORT=8080
-COOKIE_NAME=caddy_auth_session
-EOF
-
-# Build the application
-go build -o auth-server
-
-# Run the server
-./auth-server
+git clone https://github.com/Skrazzo/go-auth-server
+# Install packages
+go mod tidy
 ```
 
-### Option 2: Docker
+### Build the application
+```sh
+go build -o auth-server
+```
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/caddy-auth.git
-cd caddy-auth
+### Run the server
+```sh
+# With go command
+go run main.go
 
-# Create .env file (as above)
-
-# Build and run with Docker
-docker build -t caddy-auth .
-docker run -p 8080:8080 --env-file .env caddy-auth
+# Or built first and then, make app executable
+chmod +x ./auth-server
+# Run the server
+./auth-server
 ```
 
 ## Configuration
 
 ### Environment Variables
 
-Create a `.env` file with the following variables:
+Modify `.env` file with the following variables:
 
 ```
 JWT_KEY=your_secure_jwt_secret_key  # Secret key for signing JWT tokens
@@ -67,7 +54,7 @@ COOKIE_NAME=caddy_auth_session      # Name of the authentication cookie
 
 ### User Management
 
-Users are defined in `users/db.go`. For production use, you should modify this to use a proper database or authentication system.
+Users are defined in `users/db.go`. 
 
 Default user:
 - Username: `username`
@@ -78,24 +65,22 @@ Default user:
 Add the following to your Caddyfile to protect routes with authentication:
 
 ```
-{
-  # Global options
-  debug
-}
-
-# Your auth service
-auth.example.com {
-  reverse_proxy localhost:8080
-}
-
 # Protected application
 app.example.com {
-  forward_auth auth.example.com/verify {
-    uri /verify
-    copy_headers X-Forwarded-Uri
+  # Login route for auth server (Needs to be unprotected)
+  handle /login* {
+    reverse_proxy localhost:3000
   }
-  
-  reverse_proxy localhost:3000
+
+  handle /* {
+    # Forward auth will check if user is authenticated with /verify url
+    forward_auth localhost:3000 {
+      uri /verify
+    }
+
+    # Your protected application
+    reverse_proxy localhost:19999
+  }
 }
 ```
 
@@ -137,13 +122,7 @@ chmod +x build-server.sh
 For production deployment:
 
 1. Set `Secure: true` in the cookie configuration (routes.go) when using HTTPS
-2. Replace the basic user map with a proper database
 3. Use a strong, randomly generated JWT key
-4. Consider implementing rate limiting for login attempts
-
-## License
-
-MIT
 
 ## Contributing
 
