@@ -81,7 +81,7 @@ func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
 			Value:    tokenString,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   false, // Set to true for HTTPS in production!
+			Secure:   true, // Set to true for HTTPS in production!
 			SameSite: http.SameSiteLaxMode,
 			Expires:  time.Now().Add(24 * time.Hour), // Cookie valid for 24 hours
 		}
