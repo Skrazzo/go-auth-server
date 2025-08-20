@@ -50,6 +50,8 @@ Modify `.env` file with the following variables:
 JWT_KEY=your_secure_jwt_secret_key  # Secret key for signing JWT tokens
 PORT=8080                           # Port for the auth server to listen on
 COOKIE_NAME=caddy_auth_session      # Name of the authentication cookie
+USERNAME=                           # Username for authentication
+PASSWORD=                           # Password for authentication
 ```
 
 ### User Management

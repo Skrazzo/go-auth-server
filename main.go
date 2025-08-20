@@ -1,7 +1,6 @@
 package main
 
 import (
-	//	"net/http"
 	"caddy-auth/routes"
 	"embed"
 	"log"
@@ -18,7 +17,7 @@ func init() {
 		log.Fatalf("[ERROR] while loading .env file: \"%v\"", err)
 	}
 
-	keysToCheck := []string{"JWT_KEY", "PORT", "COOKIE_NAME"}
+	keysToCheck := []string{"JWT_KEY", "PORT", "COOKIE_NAME", "USERNAME", "PASSWORD"}
 	for _, key := range keysToCheck {
 		if os.Getenv(key) == "" {
 			log.Fatalf("[ERROR] Please set your %s in environment variable", key)

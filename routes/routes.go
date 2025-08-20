@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"caddy-auth/users"
 	"log"
 	"net/http"
 	"net/url"
@@ -24,8 +23,6 @@ type Routes struct {
 }
 
 func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
-	db := users.Users
-
 	// Extract redirect_uri from the URL
 	redirectURI := req.URL.Query().Get("redirect_uri")
 	if redirectURI == "" {
@@ -41,8 +38,14 @@ func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
 			redirectURI = "/" // Default redirect after login
 		}
 
+		// Incorrect username
+		if os.Getenv("USERNAME") != user {
+			r.Login.Tmpl.Execute(w, LoginPage{RedirectURI: redirectURI})
+			return
+		}
+
 		// Incorrect password
-		if db[user] != pass {
+		if os.Getenv("PASSWORD") != pass {
 			r.Login.Tmpl.Execute(w, LoginPage{RedirectURI: redirectURI})
 			return
 		}
@@ -65,6 +68,7 @@ func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
 		tokenString, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
 		if err != nil {
 			log.Panicln("[ERROR] Signing JWT token", err)
+
 		}
 
 		// Create and set cookie
@@ -141,7 +145,6 @@ func (r *Routes) VerifyHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	db := users.Users
 	// Compare user hash, and check if correct username is provided
 	user, ok := claims["user"].(string)
 	if !ok {
@@ -164,7 +167,7 @@ func (r *Routes) VerifyHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userPass := db[user]
+	userPass := os.Getenv("PASSWORD")
 
 	// Compare user hash, and password in db
 	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(userPass))
