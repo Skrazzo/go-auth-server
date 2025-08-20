@@ -52,6 +52,7 @@ PORT=8080                           # Port for the auth server to listen on
 COOKIE_NAME=caddy_auth_session      # Name of the authentication cookie
 USERNAME=                           # Username for authentication
 PASSWORD=                           # Password for authentication
+EXPIRE_IN=7                         # Expire in days (after it, user will be asked to log in)
 ```
 
 ### User Management

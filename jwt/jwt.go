@@ -14,10 +14,7 @@ func CachedParse(tokenStr string) (jwt.MapClaims, error) {
 
 	// Check for cache
 	if val, found := c.Get(tokenStr); found {
-		fmt.Println("Returning cache")
 		return val, nil
-	} else {
-		fmt.Println("Cache not found")
 	}
 
 	// Cache not found, parse it

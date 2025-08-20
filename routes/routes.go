@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"text/template"
 	"time"
 
@@ -51,10 +52,15 @@ func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		expireInDays, err := strconv.Atoi(os.Getenv("EXPIRE_IN"))
+		if err != nil {
+			log.Panicln("[ERROR] Converting EXPIRE_IN to int", err)
+		}
+
 		// Generate JWT token
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"user":   user,
-			"expire": time.Now().Add(time.Hour * 24).Unix(),
+			"expire": time.Now().Add(time.Hour * time.Duration(24*expireInDays)).Unix(),
 		})
 
 		// Sign token
@@ -80,7 +86,7 @@ func (r *Routes) LoginHandler(w http.ResponseWriter, req *http.Request) {
 			HttpOnly: true,
 			Secure:   true, // Set to true for HTTPS in production!
 			SameSite: http.SameSiteLaxMode,
-			Expires:  time.Now().Add(24 * time.Hour), // Cookie valid for 24 hours
+			Expires:  time.Now().Add(time.Duration(24*expireInDays) * time.Hour), // Cookie valid for 24 hours
 		}
 
 		http.SetCookie(w, &cookie)

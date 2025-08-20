@@ -20,7 +20,7 @@ func init() {
 		log.Fatalf("[ERROR] while loading .env file: \"%v\"", err)
 	}
 
-	keysToCheck := []string{"JWT_KEY", "PORT", "COOKIE_NAME", "USERNAME", "PASSWORD"}
+	keysToCheck := []string{"JWT_KEY", "PORT", "COOKIE_NAME", "USERNAME", "PASSWORD", "EXPIRE_IN"}
 	for _, key := range keysToCheck {
 		if os.Getenv(key) == "" {
 			log.Fatalf("[ERROR] Please set your %s in environment variable", key)
