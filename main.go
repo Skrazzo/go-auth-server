@@ -1,6 +1,7 @@
 package main
 
 import (
+	"caddy-auth/cache"
 	"caddy-auth/routes"
 	"embed"
 	"log"
@@ -11,7 +12,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Init gets automatically called
 func init() {
+	// Check for environment variables
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("[ERROR] while loading .env file: \"%v\"", err)
@@ -23,6 +26,9 @@ func init() {
 			log.Fatalf("[ERROR] Please set your %s in environment variable", key)
 		}
 	}
+
+	// Load cache
+	cache.Load()
 }
 
 // For embeded templates
@@ -31,6 +37,8 @@ func init() {
 var templatesFs embed.FS
 
 func main() {
+	// Close cache on exit
+	defer cache.Close()
 	// Load templates
 	loginTemplate := template.Must(template.ParseFS(templatesFs, "templates/login.html"))
 
