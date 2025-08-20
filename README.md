@@ -25,11 +25,13 @@ go mod tidy
 ```
 
 ### Build the application
+
 ```sh
 go build -o auth-server
 ```
 
 ### Run the server
+
 ```sh
 # With go command
 go run main.go
@@ -57,9 +59,10 @@ EXPIRE_IN=7                         # Expire in days (after it, user will be ask
 
 ### User Management
 
-Users are defined in `users/db.go`. 
+Users are defined in `users/db.go`.
 
 Default user:
+
 - Username: `username`
 - Password: `plain-password`
 
@@ -90,20 +93,22 @@ app.example.com {
 ## How It Works
 
 1. When a user accesses a protected application:
-   - Caddy forwards the request to the `/verify` endpoint
-   - If authenticated, the request proceeds to the application
-   - If not authenticated, the user is redirected to the login page
+
+    - Caddy forwards the request to the `/verify` endpoint
+    - If authenticated, the request proceeds to the application
+    - If not authenticated, the user is redirected to the login page
 
 2. Authentication flow:
-   - User submits login credentials
-   - Server validates credentials and issues a JWT token
-   - Token is stored in a secure cookie
-   - User is redirected back to the original URL
+
+    - User submits login credentials
+    - Server validates credentials and issues a JWT token
+    - Token is stored in a secure cookie
+    - User is redirected back to the original URL
 
 3. Verification process:
-   - The `/verify` endpoint checks for a valid cookie
-   - If valid, it returns a 200 status code and sets an `X-Authenticated-User` header
-   - If invalid, it redirects to the login page
+    - The `/verify` endpoint checks for a valid cookie
+    - If valid, it returns a 200 status code and sets an `X-Authenticated-User` header
+    - If invalid, it redirects to the login page
 
 ## Endpoints
 
@@ -125,7 +130,7 @@ chmod +x build-server.sh
 For production deployment:
 
 1. Set `Secure: true` in the cookie configuration (routes.go) when using HTTPS
-3. Use a strong, randomly generated JWT key
+2. Use a strong, randomly generated JWT key
 
 ## Contributing
 
