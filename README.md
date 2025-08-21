@@ -75,12 +75,12 @@ Add the following to your Caddyfile to protect routes with authentication:
 app.example.com {
   # Login route for auth server (Needs to be unprotected)
   handle /login* {
-    reverse_proxy localhost:3000
+    reverse_proxy localhost:8080 # proxy to go-auth server
   }
 
   handle /* {
     # Forward auth will check if user is authenticated with /verify url
-    forward_auth localhost:3000 {
+    forward_auth localhost:8080 {
       uri /verify
     }
 
